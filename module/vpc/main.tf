@@ -76,7 +76,7 @@ resource "aws_subnet" "subnet_public" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.environment}_subnet_public"
+    Name = "${var.environment}-subnet-public-${element(var.availability_zone, count.index)}"
     Environment = "${var.environment}"
   }
 }
@@ -89,9 +89,23 @@ resource "aws_subnet" "subnet_private" {
   availability_zone = "${element(var.availability_zone, count.index)}"
 
   tags = {
-    Name = "${var.environment}_subnet_private"
+    Name = "${var.environment}-subnet-private-${element(var.availability_zone, count.index)}"
     Environment = "${var.environment}"
   }
+}
+
+resource "aws_route_table_association" "route_private" {
+  count = "${length(aws_subnet.subnet_private)}"
+
+  subnet_id = "${element(aws_subnet.subnet_private.*.id, count.index)}"
+  route_table_id = "${aws_route_table.private.id}"
+}
+
+resource "aws_route_table_association" "route_public" {
+  count = "${length(aws_subnet.subnet_public)}"
+
+  subnet_id = "${element(aws_subnet.subnet_public.*.id, count.index)}"
+  route_table_id = "${aws_route_table.public.id}"
 }
 
 resource "aws_security_group" "sg_vpc" {

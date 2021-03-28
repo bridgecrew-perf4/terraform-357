@@ -6,7 +6,7 @@ locals {
   availability_zone = data.aws_availability_zones.zones.names
 }
 
-module "vpc" {
+module "dev" {
   source = "../../module/vpc/"
   
   region = "${var.region}"

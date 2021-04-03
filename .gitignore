@@ -1,4 +1,5 @@
 poc
 **/.terraform
 **/*.tfstate*
-**/.terraform.lock.hcl
+# **/.terraform.lock.hcl
+**.lock**
